@@ -1,0 +1,203 @@
+<core-navbar-buttons slot="end" prepend>
+    <ion-button *ngIf="searchEnabled" (click)="openSearch()" [ariaLabel]="'core.courses.searchcourses' | translate">
+        <ion-icon name="fas-magnifying-glass" slot="icon-only" aria-hidden="true" />
+    </ion-button>
+</core-navbar-buttons>
+<ion-content>
+    <ion-refresher slot="fixed" [disabled]="!dataLoaded" (ionRefresh)="doRefresh($event.target)">
+        <ion-refresher-content pullingText="{{ 'core.pulltorefresh' | translate }}" />
+    </ion-refresher>
+
+    <div class="ion-text-center custom-box">
+        <img src="assets/img/top_logo.png" alt=" " />
+        <h3>{{ 'core.sitehome.sitewelcometitle' | translate }}</h3>
+        <p>{{ 'core.sitehome.sitewelcomedescription' | translate }}</p>
+    </div>
+ 
+    <core-loading [hideUntil]="dataLoaded">
+        <ion-list class="core-course-module-list-wrapper">
+            <!-- Site home main contents. -->
+            <ng-container *ngIf="section && section.hasContent">
+                <ion-item class="ion-text-wrap section-summary" *ngIf="section.summary">
+                    <ion-label>
+                        <core-format-text [text]="section.summary" contextLevel="course" [contextInstanceId]="siteHomeId" />
+                    </ion-label>
+                </ion-item>
+
+                <core-course-module *ngFor="let module of section.modules" [module]="module" [section]="section" />
+            </ng-container>
+
+<!-- ##################### START CATEGORIES SCROLL BAR ########################## -->
+            <!-- Scrollbar Categories. -->
+            <ng-container>
+                <ion-card>
+                    <ion-item button (click)="openCourseCategories()">
+                        <ion-icon name="far-folder" slot="start" aria-hidden="true"></ion-icon>
+                        <ion-label>
+                            <p class="item-heading">{{ 'core.courses.library' | translate }}</p>
+                        </ion-label>
+                    </ion-item>
+                    <div class="card-body scrollable-div">
+                        <div class="scrollable-item" *ngFor="let category of categories">
+                            <div (click)="openCategory(category.id)">
+                                <div class="item-heading">{{ category.coursecount }} Courses</div>
+                                <div class="item-header">{{ category.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+<!--
+                    <div slot="end" class="flex-row">
+                        <core-horizontal-scroll-controls #scrollControl />
+                    </div>
+                    <div [hidden]="categories.length === 0" class="core-horizontal-scroll" 
+                        (scroll)="scrollControl.updateScrollPosition()">
+                        <div class="flex-row">
+                            <div class="safe-area-pseudo-padding-start"></div>
+                            <ng-container *ngFor="let category of categories">
+                                <ion-card>
+                                    <ion-item class="ion-text-wrap">
+                                        <ion-label>
+                                            <div class="core-course-maininfo">
+                                                <p *ngIf="category.name" class="item-heading">{{ category.coursecount }}</p>
+                                                <p *ngIf="category.name" class="core-course-shortname core-course-additional-info">
+                                                    <core-format-text [text]="category.name" contextLevel="category" [contextInstanceId]="category.id" />
+                                                </p>
+                                            </div>
+                                        </ion-label>
+                                    </ion-item>
+                                </ion-card>
+                            </ng-container>
+                            <div class="safe-area-pseudo-padding-end"></div>
+                        </div>
+                    </div>
+-->                    
+                </ion-card>                
+            </ng-container>
+
+<!-- ##################### START COURSES SCROLL BAR ########################## -->
+            <!-- Scrollbar My courses. -->
+            <ng-container>
+                <ion-card>
+                    <ion-item button class="ion-text-wrap" (click)="openMyCourses()">
+                        <ion-icon name="fas-graduation-cap" fixed-width slot="start" aria-hidden="true" />
+                        <ion-label>
+                            <p class="item-heading">{{ 'core.courses.mycourses' | translate}}</p>
+                        </ion-label>
+                    </ion-item>
+                
+                <div slot="end" class="flex-row">
+                    <core-horizontal-scroll-controls #scrollControls />
+                </div>
+                <!-- List of courses. -->
+                <div [hidden]="courses.length === 0" class="core-horizontal-scroll"
+                    (scroll)="scrollControls.updateScrollPosition()">
+                    <div (onResize)="scrollControls.updateScrollPosition()" class="flex-row">
+                        <div class="safe-area-pseudo-padding-start"></div>
+                        <ng-container *ngFor="let course of courses">
+                            <core-courses-course-list-item [course]="course" class="core-recentlyaccessedcourses" layout="summarycard" />
+                        </ng-container>
+                        <div class="safe-area-pseudo-padding-end"></div>
+                    </div>
+                </div>
+            </ion-card>
+            </ng-container>
+
+<!-- ##################### END  COURSES SCROLL BAR ########################## -->
+
+<!-- ##################### START MICRO LEARNINGS SCROLL BAR ########################## -->
+            <ng-container>
+                    <ion-card>
+                        <ion-item button (click)="openAvailableCourses()">
+                            <ion-icon name="fas-magnifying-glass" slot="start" aria-hidden="true"></ion-icon>
+                            <ion-label>
+                                <p class="item-heading">{{ 'core.courses.microlearning' | translate }}</p>
+                            </ion-label>
+                        </ion-item>
+                        <div class="card-body scrollable-div">
+                            <div class="scrollable-item" *ngFor="let course of courses">
+                                <div (click)="openCourse(course)">
+                                    <div class="item-header">{{ course.fullname | slice:0:65 }}{{ course.fullname.length > 65 ? '...' : '' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ion-card>                
+                </ng-container>
+<!-- ##################### END  MICRO LEARNING SCROLL BAR ########################## -->
+            <!-- Site home items: news, categories, courses, etc. -->
+            <ng-container *ngIf="items.length > 0">
+                <core-spacer *ngIf="section && section!.hasContent" />
+                <ng-container *ngFor="let item of items">
+                    <ng-container [ngSwitch]="item">
+                        <ng-container *ngSwitchCase="'LIST_OF_COURSE'">
+                            <ng-template *ngTemplateOutlet="allCourseList" />
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'LIST_OF_CATEGORIES'">
+                            <ng-template *ngTemplateOutlet="categorie" />
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'COURSE_SEARCH_BOX'">
+                            <ng-template *ngTemplateOutlet="courseSearch" />
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'ENROLLED_COURSES'">
+                            <ng-template *ngTemplateOutlet="enrolledCourseList" />
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'NEWS_ITEMS'">
+                            <ng-template *ngTemplateOutlet="news" />
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </ion-list>
+        <core-block-side-blocks-button slot="fixed" *ngIf="hasBlocks" contextLevel="course" [instanceId]="siteHomeId" />
+<!--
+        <core-empty-box *ngIf="!hasContent" icon="fas-box-open" [message]="'core.course.nocontentavailable' | translate" />
+-->        
+    </core-loading>
+</ion-content>
+
+<ng-template #allCourseList>
+    <ion-card>
+        <ion-item button class="ion-text-wrap" (click)="openAvailableCourses()">
+            <ion-icon name="fas-graduation-cap" fixed-width slot="start" aria-hidden="true" />
+            <ion-label>
+                <p class="item-heading">{{ 'core.courses.availablecourses' | translate}}</p>
+            </ion-label>
+        </ion-item>
+    </ion-card>
+</ng-template>
+
+<ng-template #news>
+    <core-course-module class="core-sitehome-news" *ngIf="newsForumModule" [module]="newsForumModule" />
+</ng-template>
+
+<ng-template #categorie>
+    <ion-card>
+        <ion-item button class="ion-text-wrap" (click)="openCourseCategories()">
+            <ion-icon name="far-folder" slot="start" aria-hidden="true" />
+            <ion-label>
+                <p class="item-heading">{{ 'core.courses.categories' | translate}}</p>
+            </ion-label>
+        </ion-item>
+    </ion-card>
+</ng-template>
+
+<ng-template #enrolledCourseList>
+    <ion-card>
+        <ion-item button class="ion-text-wrap" (click)="openMyCourses()">
+            <ion-icon name="fas-graduation-cap" fixed-width slot="start" aria-hidden="true" />
+            <ion-label>
+                <p class="item-heading">{{ 'core.courses.mycourses' | translate}}</p>
+            </ion-label>
+        </ion-item>
+    </ion-card>
+</ng-template>
+
+<ng-template #courseSearch>
+    <ion-card>
+        <ion-item button class="ion-text-wrap" (click)="openSearch()">
+            <ion-icon name="fas-magnifying-glass" slot="start" aria-hidden="true" />
+            <ion-label>
+                <p class="item-heading">{{ 'core.courses.searchcourses' | translate}}</p>
+            </ion-label>
+        </ion-item>
+    </ion-card>
+</ng-template>

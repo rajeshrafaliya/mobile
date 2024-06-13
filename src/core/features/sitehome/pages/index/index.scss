@@ -1,0 +1,39 @@
+@use "theme/globals" as *;
+
+ion-item ion-icon {
+    display: inline-block;
+    border-radius: var(--mdl-shape-borderRadius-xs);
+    padding: 4px;
+    color: var(--text-color);
+    line-height: var(--size);
+    --margin-end: 8px;
+    @include margin-horizontal(null, var(--margin-end));
+}
+
+core-spacer {
+    --spacer-horizontal: 10px;
+}
+.scrollable-div {
+    white-space: nowrap; /* Prevents text wrapping */
+    overflow-x: scroll; /* Enables horizontal scrolling */
+    padding: 10px; /* Optional: Add padding around the scrollable area */
+  }
+  .scrollable-item {
+    display: inline-block; /* Items are displayed inline */
+    text-align: center;
+    width: 160px; /* Fixed width for each item */
+    height: 110px; /* Fixed height for each item */
+    margin-right: 5px; /* Space between items */
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #dee2e6; /* Light gray border */
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px; /* Padding inside each item */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow effect */
+  }
+  .item-header {
+    margin-top: 10%;
+    font-weight: bold; /* Make the header bold */
+    margin-bottom: 10px; /* Add space below the header */
+    text-wrap: wrap; /* Text wrap in long name of course */
+    display: grid; /* Display in proper grid format */
+  }

@@ -1,0 +1,12 @@
+:host {
+    swiper-container {
+        height: 100%;
+
+        swiper-slide {
+            display: block;
+            justify-content: start;
+            align-items: start;
+            text-align: start;
+        }
+    }
+}
